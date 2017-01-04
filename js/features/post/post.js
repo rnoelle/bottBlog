@@ -5,8 +5,8 @@ angular.module('bottBlog')
       scope: {
         postData: '='
       },
-      controller: function ($scope, ) {
-
+      controller: function ($scope, postService) {
+        
       }
     }
   })

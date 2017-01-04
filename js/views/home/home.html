@@ -1,0 +1,21 @@
+<div class="hero">
+  <h1>Points at Infinity</h1>
+</div>
+<div class="article-box">
+  <article ng-repeat="post in posts">
+    <header>
+      {{post.title}}
+    </header>
+    <section>
+      {{post.text}}
+    </section>
+    <div>
+      <span>comment</span><span>share</span>
+    </div>
+  </article>
+  <article class="search-results" ng-if="results">
+    <div ng-repeat="result in results">
+      
+    </div>
+  </article>
+</div>

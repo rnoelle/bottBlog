@@ -1,4 +1,4 @@
 angular.module('bottBlog')
-  .controller('homeCtrl', function ($scope) {
-    
+  .controller('homeCtrl', function () {
+
   })

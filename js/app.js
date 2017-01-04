@@ -5,8 +5,15 @@ angular.module('bottBlog', ['ui.router'])
 
     $stateProvider
       .state('home', {
-        templateUrl: './views/home/home.html',
+        url: '/',
+        templateUrl: '/js/views/home/home.html',
         controller: 'homeCtrl',
         controllerAs: 'hc'
+      })
+      .state('newPost', {
+        url: '/newPost',
+        templateUrl: '/js/views/newPost/newPost.html',
+        controller: 'newPostCtrl',
+        controllerAs: 'npc'
       })
   })

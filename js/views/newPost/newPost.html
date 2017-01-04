@@ -1,0 +1,8 @@
+<form ng-click="addPost(post)">
+  <input type="text" ng-model="post.title" placeholder="title">
+  <textarea ng-model="post.text" placeholder="text here"></textarea>
+  <input type="file" ng-model="post.file" placeholder="upload file">
+  <tags-input ng-model="post.tags" placeholder="add tags"></tags-input>
+
+  <input type="submit" value="Publish">
+</form>
