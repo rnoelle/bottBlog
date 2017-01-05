@@ -1,8 +1,13 @@
-<form ng-click="addPost(post)">
-  <input type="text" ng-model="post.title" placeholder="title">
-  <textarea ng-model="post.text" placeholder="text here"></textarea>
-  <input type="file" ng-model="post.file" placeholder="upload file">
-  <tags-input ng-model="post.tags" placeholder="add tags"></tags-input>
+<div class="new-post-form">
+  <form ng-submit="addPost(post)">
+    <h1>Add a New Post</h1>
+    <input class="new-post-title" type="text" ng-model="post.title" placeholder="title">
+    <textarea ng-model="post.text" placeholder="text here"></textarea>
 
-  <input type="submit" value="Publish">
-</form>
+    <file-upload></file-upload>
+
+    <tags-input ng-model="post.tags"></tags-input>
+
+    <input type="submit" value="Publish">
+  </form>
+</div>

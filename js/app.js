@@ -1,4 +1,4 @@
-angular.module('bottBlog', ['ui.router'])
+angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput'])
   .config(function ($stateProvider, $urlRouterProvider) {
 
     $urlRouterProvider.otherwise('/');

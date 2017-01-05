@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,700|Slabo+27px");
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul, li {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Slabo', 'Roboto', serif; }
+
+p, a, input, li, textarea, button, label {
+  font-family: 'Roboto', 'Slabo', sans-serif; }
+
+.new-post-form {
+  width: 80vw;
+  max-width: 1000px;
+  border: 2px solid #c3c3c3;
+  -webkit-box-shadow: 1px 2px 3px 0 #9c9c9c;
+  -moz-box-shadow: 1px 2px 3px 0 #9c9c9c;
+  box-shadow: 1px 2px 3px 0 #9c9c9c;
+  border-radius: 3px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  margin: 5vh auto; }
+  .new-post-form form {
+    display: flex;
+    flex-direction: column;
+    width: 75%; }
+    .new-post-form form h1 {
+      font-size: 2rem;
+      color: #5121b8;
+      border-bottom: 2px solid #5121b8;
+      margin-bottom: 1rem; }
+    .new-post-form form label {
+      padding: .5rem 3rem;
+      width: 5em;
+      background: #5121b8;
+      color: white;
+      position: relative;
+      font-size: .75rem; }
+      .new-post-form form label #file {
+        height: 0.01px;
+        width: 0.01px;
+        opacity: 0.01;
+        position: absolute; }
+    .new-post-form form input,
+    .new-post-form form tags-input,
+    .new-post-form form textarea {
+      max-width: 600px;
+      margin-bottom: 0.5rem; }
+      .new-post-form form input[type=text],
+      .new-post-form form tags-input[type=text],
+      .new-post-form form textarea[type=text] {
+        height: 1.5rem;
+        padding-left: 0.5rem;
+        width: 50%; }
+      .new-post-form form input[type=submit],
+      .new-post-form form tags-input[type=submit],
+      .new-post-form form textarea[type=submit] {
+        padding: 0.5rem 3rem;
+        background: none;
+        margin: 0 auto;
+        background: #5121b8;
+        color: white;
+        border-radius: 2px;
+        border: none; }
+      .new-post-form form input.new-post-title,
+      .new-post-form form tags-input.new-post-title,
+      .new-post-form form textarea.new-post-title {
+        box-shadow: 1px 1px 1px 0 lightgray inset; }
+    .new-post-form form textarea {
+      height: 50vh;
+      box-shadow: 1px 1px 1px 0 lightgray inset;
+      padding-left: 0.5rem;
+      padding-top: .5rem; }
+    .new-post-form form file-upload {
+      position: relative; }
+      .new-post-form form file-upload label {
+        float: left;
+        margin-bottom: .5rem;
+        border-radius: 2px; }
+      .new-post-form form file-upload h6 {
+        transform: translate(1.5%, 45%);
+        padding-left: .5rem; }

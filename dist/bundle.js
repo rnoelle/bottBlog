@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('bottBlog', ['ui.router']).config(function ($stateProvider, $urlRouterProvider) {
+angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput']).config(function ($stateProvider, $urlRouterProvider) {
 
   $urlRouterProvider.otherwise('/');
 
@@ -22,6 +22,40 @@ angular.module('bottBlog').controller('mainCtrl', function ($scope) {});
 'use strict';
 
 angular.module('bottBlog').service('postService', function () {});
+'use strict';
+
+angular.module('bottBlog').directive('fileUpload', function () {
+  return {
+    restrict: 'E',
+    templateUrl: '/js/features/fileUpload/fileUpload.html',
+    link: function link(scope, element, attrs) {
+      $('#file').on('change', function () {
+        console.log(document.getElementById('file').files[0].name);
+        scope.fileName = document.getElementById('file').files[0].name;
+        scope.$apply();
+      });
+    }
+  };
+});
+'use strict';
+
+angular.module('bottBlog').directive('post', function () {
+  return {
+    restrict: 'E',
+    scope: {
+      postData: '='
+    },
+    controller: function controller($scope, postService) {}
+  };
+});
+'use strict';
+
+angular.module('bottBlog').directive('searchBar', function () {
+  return {
+    restrict: 'E',
+    link: function link(scope, element, attrs) {}
+  };
+});
 'use strict';
 
 /*!
@@ -1188,26 +1222,24 @@ angular.module('bottBlog').service('postService', function () {});
 })();
 'use strict';
 
-angular.module('bottBlog').directive('post', function () {
-  return {
-    restrict: 'E',
-    scope: {
-      postData: '='
-    },
-    controller: function controller($scope, postService) {}
-  };
-});
-'use strict';
-
-angular.module('bottBlog').directive('searchBar', function () {
-  return {
-    restrict: 'E',
-    link: function link(scope, element, attrs) {}
-  };
-});
-'use strict';
-
 angular.module('bottBlog').controller('homeCtrl', function () {});
 'use strict';
 
-angular.module('bottBlog').controller('newPostCtrl', function () {});
+angular.module('bottBlog').controller('newPostCtrl', function ($scope, $firebaseArray) {
+  var ref = firebase.database().ref('posts/');
+  var storageRef = firebase.storage().ref();
+
+  var data = $firebaseArray(ref);
+
+  $scope.addPost = function (post) {
+    if (!post) return;
+    post.date = new Date();
+    var postRef = storageRef.child(post.title + post.date);
+
+    postRef.put(document.getElementById('file').files[0]).then(function (snap) {
+      post.file = snap.a.fullPath;
+      data.$add(post);
+      $scope.post = {};
+    });
+  };
+});

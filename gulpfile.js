@@ -15,7 +15,7 @@ gulp.task('js', () => {
 });
 
 gulp.task('css', () => {
-  gulp.src(['./styles/**/*.scss'])
+  gulp.src('./styles/**/*.scss')
   .pipe(sass().on('error', sass.logError))
   .pipe(concat('bundle.css'))
   .pipe(gulp.dest('./dist'));
@@ -23,4 +23,4 @@ gulp.task('css', () => {
 
 gulp.task('default', ['css', 'js']);
 gulp.watch('./js/**/*.js', ['js']);
-gulp.watch('./style/**/*.css', ['css']);
+gulp.watch('./styles/**/*.scss', ['css']);
