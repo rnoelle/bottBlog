@@ -3,3 +3,10 @@ $secondary: rgb(82, 196, 227);
 $shadow: #c3c3c3;
 $headerText: #303030;
 $pText: #080808;
+
+$homePrime: rgb(43, 69, 149);
+
+@mixin round-top {
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px; 
+}

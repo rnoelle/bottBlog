@@ -58,6 +58,14 @@ angular.module('bottBlog').directive('searchBar', function () {
 });
 'use strict';
 
+angular.module('bottBlog').controller('homeCtrl', function ($scope, $firebaseArray) {
+  var ref = firebase.database().ref('posts/');
+  var storageRef = firebase.storage().ref();
+
+  $scope.posts = $firebaseArray(ref);
+});
+'use strict';
+
 /*!
  * ngTagsInput v3.1.1
  * http://mbenford.github.io/ngTagsInput
@@ -1222,9 +1230,6 @@ angular.module('bottBlog').directive('searchBar', function () {
 })();
 'use strict';
 
-angular.module('bottBlog').controller('homeCtrl', function () {});
-'use strict';
-
 angular.module('bottBlog').controller('newPostCtrl', function ($scope, $firebaseArray) {
   var ref = firebase.database().ref('posts/');
   var storageRef = firebase.storage().ref();
@@ -1233,13 +1238,21 @@ angular.module('bottBlog').controller('newPostCtrl', function ($scope, $firebase
 
   $scope.addPost = function (post) {
     if (!post) return;
-    post.date = new Date();
-    var postRef = storageRef.child(post.title + post.date);
-
-    postRef.put(document.getElementById('file').files[0]).then(function (snap) {
-      post.file = snap.a.fullPath;
+    post.post_date = new Date();
+    post.post_date = post.post_date.getTime();
+    var postRef = storageRef.child(post.title + post.post_date);
+    var theFile = document.getElementById('file').files[0];
+    if (theFile) {
+      postRef.put(theFile).then(function (snap) {
+        post.file = snap.a.fullPath;
+        data.$add(post);
+        $scope.post = {};
+        $window.location.reload();
+      });
+    } else {
+      console.log(post);
       data.$add(post);
       $scope.post = {};
-    });
+    }
   };
 });

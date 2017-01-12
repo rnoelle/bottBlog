@@ -1,21 +1,25 @@
 <div class="hero">
-  <h1>Points at Infinity</h1>
+  <h1>Blowing Up Singularities</h1>
 </div>
 <div class="article-box">
   <article ng-repeat="post in posts">
     <header>
-      {{post.title}}
+       <h3>{{post.title}}</h3>
+       <hr>
     </header>
     <section>
-      {{post.text}}
+      <p>{{post.text}}<p>
     </section>
+    <h6>{{post.post_date | date: 'medium'}}</h6>
+    <hr>
     <div>
-      <span>comment</span><span>share</span>
+      <span>comment</span> <span>share</span>
     </div>
+    <hr>
   </article>
   <article class="search-results" ng-if="results">
     <div ng-repeat="result in results">
-      
+
     </div>
   </article>
 </div>
