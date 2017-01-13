@@ -1,0 +1,19 @@
+<article>
+
+<header>
+   <h3>{{postData.title}}</h3>
+   <hr>
+</header>
+<section >
+  <p>{{postData.text}}<p>
+</section>
+<section class="file-section" ng-if="showFile">
+  <iframe id="iframe" ng-if="fileUrl" ng-src="{{fileUrl}}" width="500" height="600"></iframe>
+</section>
+<h6>{{postData.post_date | date: 'medium'}}</h6>
+<hr>
+<div>
+  <span>comment</span> <span>share</span>
+</div>
+<hr>
+</article>

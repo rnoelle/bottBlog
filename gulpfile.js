@@ -5,7 +5,7 @@ const sass = require('gulp-sass');
 const plumber = require('gulp-plumber');
 
 gulp.task('js', () => {
-  gulp.src(['./js/app.js', './js/**/*.js'])
+  gulp.src(['./js/app.js', './js/lib/**/*.js', './js/**/*.js'])
   .pipe(plumber())
   .pipe(babel({
     presets: ['es2015']

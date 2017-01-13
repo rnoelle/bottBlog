@@ -1,12 +1,40 @@
 angular.module('bottBlog')
   .directive('post', function () {
     return {
-      restrict: 'E',
+      restrict: 'EA',
+      templateUrl: './js/features/post/post.html',
       scope: {
-        postData: '='
+        postData: '=',
+        showFile: '='
       },
-      controller: function ($scope, postService) {
-        
+      controller: function ($scope, postService, $firebaseArray, $sce) {
+        var storage = firebase.storage();
+        var storageRef = storage.ref();
+
+         $scope.$watch('postData', function () {
+           console.log($scope.postData.file);
+           if ($scope.postData.file) {
+             var pathReference = storageRef.child($scope.postData.file);
+             pathReference.getDownloadURL().then(function (url) {
+               $scope.fileUrl = $sce.trustAsResourceUrl(url);
+               $scope.$apply()
+             }).catch(function (err) {
+               console.log(err);
+             })
+           }
+
+         })
+
+      },
+      link: function (scope, element, attr) {
+        if (attr.showFile == 'false') {
+        var p = element[0].children[0].children[1].children[0]
+        $clamp(p, {clamp:7});
+      }
+      // console.log(element[0].children[0].children[1].children[0]);
+
       }
     }
-  })
+
+
+  });

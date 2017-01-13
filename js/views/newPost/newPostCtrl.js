@@ -1,5 +1,5 @@
 angular.module('bottBlog')
-  .controller('newPostCtrl', function ($scope, $firebaseArray) {
+  .controller('newPostCtrl', function ($scope, $firebaseArray, $window) {
     var ref = firebase.database().ref('posts/');
     var storageRef = firebase.storage().ref();
 

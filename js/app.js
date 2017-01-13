@@ -16,4 +16,9 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput'])
         controller: 'newPostCtrl',
         controllerAs: 'npc'
       })
+      .state('post', {
+        url: '/post/:id',
+        templateUrl: '/js/views/post/post.html',
+        controller: 'postCtrl'
+      })
   })

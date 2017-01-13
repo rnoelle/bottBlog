@@ -1,14 +1,13 @@
 @import './_base.scss';
 @import './_variables.scss';
 @import './_fonts.scss';
-
-
 .hero {
   background-image: url('../styles/assets/xagqoinfsu4-ronald-yang.jpg');
   background-size: cover;
   background-position: center;
   width: 100vw;
   height: 60vh;
+  min-height: 400px;
   position: relative;
   h1 {
     position: absolute;
@@ -20,17 +19,15 @@
     text-align: right;
   }
 }
-
 .article-box {
   article {
     width: 60vw;
     max-width: 900px;
-    margin: 2rem auto;
-    margin-bottom: 6rem;
+    margin: 2rem auto 6rem;
     header {
       i {
         font-size: 1rem;
-        margin-right: .5rem;
+        margin-right: 0.5rem;
         transform: translate(0, -20%);
       }
       padding-bottom: 0;
@@ -42,7 +39,7 @@
       line-height: 1.25rem;
     }
     hr {
-      border: #ddd .5px solid
+      border: #ddd 0.5px solid;
     }
   }
 }
