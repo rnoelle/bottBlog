@@ -2,7 +2,7 @@
   <h1>Blowing Up Singularities</h1>
 </div>
 <div class="article-box">
-  <article ng-repeat="post in posts">
+  <article ng-repeat="post in posts | orderBy: '-post_date'">
     <post ui-sref="post({id: post.$id})" show-file="false" post-data="post"></post>
   </article>
   <article class="search-results" ng-if="results">
