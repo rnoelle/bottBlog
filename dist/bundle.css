@@ -83,6 +83,49 @@ p, a, input, li, textarea, button, label {
   .article-box article hr {
     border: #ddd 0.5px solid; }
 
+.login-page {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+  .login-page h1 {
+    font-size: 2.5rem; }
+  .login-page p {
+    font-size: .55rem; }
+  .login-page > div {
+    padding: 2rem; }
+    .login-page > div form {
+      display: flex;
+      flex-direction: column; }
+      .login-page > div form input {
+        margin: 1px 0;
+        border: solid #ddd .5px; }
+      .login-page > div form input[type='text'], .login-page > div form input[type='password'] {
+        width: 25vw;
+        padding: .25rem; }
+      .login-page > div form input[type="submit"] {
+        margin-top: 3px;
+        padding: .25rem;
+        cursor: pointer; }
+        .login-page > div form input[type="submit"]:hover {
+          opacity: .85; }
+      .login-page > div form .pass-confirm {
+        color: red; }
+  .login-page h4, .login-page p {
+    text-align: center;
+    margin: .5rem 0; }
+  .login-page img {
+    height: 2rem;
+    margin: auto;
+    transform: translate(50%, 0);
+    cursor: pointer; }
+    .login-page img:hover {
+      opacity: .85; }
+  .login-page a {
+    text-decoration: underline;
+    cursor: pointer; }
+
 @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,700|Slabo+27px");
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,

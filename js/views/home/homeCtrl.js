@@ -4,7 +4,6 @@ angular.module('bottBlog')
     var storageRef = firebase.storage().ref();
     ref.orderByChild('post_date').limitToLast(10).on("child_added", function (snap) {
       $scope.posts = $firebaseArray(ref);
-      console.log($scope.posts);
     })
 
 

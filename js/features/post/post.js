@@ -7,12 +7,11 @@ angular.module('bottBlog')
         postData: '=',
         showFile: '='
       },
-      controller: function ($scope, postService, $firebaseArray, $sce) {
+      controller: function ($scope, $firebaseArray, $sce) {
         var storage = firebase.storage();
         var storageRef = storage.ref();
 
          $scope.$watch('postData', function () {
-           console.log($scope.postData.file);
            if ($scope.postData.file) {
              var pathReference = storageRef.child($scope.postData.file);
              pathReference.getDownloadURL().then(function (url) {

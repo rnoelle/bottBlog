@@ -1,0 +1,56 @@
+.login-page {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  h1 {
+    font-size: 2.5rem;
+  }
+  p {
+    font-size: .55rem;
+  }
+  & > div {
+    padding: 2rem;
+    form {
+    display: flex;
+    flex-direction: column;
+      input {
+        margin: 1px 0;
+        border: solid #ddd .5px;
+      }
+      input[type='text'], input[type='password'] {
+        width: 25vw;
+        padding: .25rem;
+      }
+      input[type="submit"] {
+        margin-top: 3px;
+        padding: .25rem;
+        cursor: pointer;
+        &:hover {
+          opacity: .85;
+        }
+      }
+      .pass-confirm {
+        color: red;
+      }
+    }
+  }
+  h4, p {
+    text-align: center;
+    margin: .5rem 0;
+  }
+  img {
+    height: 2rem;
+    margin: auto;
+    transform: translate(50%, 0);
+    cursor: pointer;
+    &:hover {
+      opacity: .85;
+    }
+  }
+  a {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}

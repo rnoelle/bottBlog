@@ -1,0 +1,37 @@
+<div class="login-page">
+
+<div ng-if="!register" ng-class="{warning: isError&&!register}">
+  <h1 ng-if="!isError">Welcome!</h1>
+  <h1 ng-if="isError">Please Try Again</h1>
+  <form ng-submit="loginEmail(email, password)">
+  <input type="text" placeholder="Email" ng-model="email" required>
+  <input type="password" placeholder="Password" ng-model="password" required>
+  <input type="submit" value="Login">
+  </form>
+  <h4>- or -</h4>
+  <img src="../../../styles/assets/google-btn.png"
+    ng-click="login()">
+  <p>Don't have an account? <a ng-click="getRegister()">Signup Here</a></p>
+</div>
+
+<div ng-if="register">
+  <h1>Create Account</h1>
+  <form name="newUserForm" ng-submit="createUser(email, password)">
+    <input type="text" placeholder="Email" ng-model="email" required>
+    <input type="password"  placeholder="Password" ng-model="password" required>
+    <input type="password" name="password" placeholder="Confirm Password"
+      ng-model="passwordConfirm"
+      required
+      pass-confirm="password">
+      <div ng-messages="registrationForm.confirmPassword.$error">
+        <div ng-show="newUserForm.password.$invalid && !newUserForm.password.$pristine"
+          class="pass-confirm"
+          ng-message="pass-confirm">
+          Passwords do not match</div>
+      </div>
+    <input type="submit" value="Sign Up">
+  </form>
+  <p>Already have an account? <a ng-click="getRegister()">Login Here</a></p>
+</div>
+
+</div>

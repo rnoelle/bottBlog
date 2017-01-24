@@ -1,8 +1,12 @@
 angular.module('bottBlog')
-  .controller('newPostCtrl', function ($scope, $firebaseArray, $window) {
+  .controller('newPostCtrl', function ($scope, $state, currentAuth, $firebaseArray, $window) {
     var ref = firebase.database().ref('posts/');
     var storageRef = firebase.storage().ref();
 
+    var user = firebase.auth().currentUser;
+    if (user.email !== 'reidnoelle2@gmail.com') {
+      $state.go('home')
+    }
 
     var data = $firebaseArray(ref);
 

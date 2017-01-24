@@ -13,11 +13,38 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput']).config(func
     url: '/newPost',
     templateUrl: '/js/views/newPost/newPost.html',
     controller: 'newPostCtrl',
-    controllerAs: 'npc'
+    resolve: {
+      currentAuth: function currentAuth(Auth, $state) {
+        return Auth.$requireSignIn().then(function (el) {
+          console.log('email', el.email);
+          if (el.email !== 'reidnoelle2@gmail.com') {
+            $state.go('home');
+          }
+        }).catch(function (error) {
+          if (error == 'AUTH_REQUIRED') {
+            $state.go('login({error:a})');
+          }
+        });
+      }
+    }
   }).state('post', {
     url: '/post/:id',
     templateUrl: '/js/views/post/post.html',
     controller: 'postCtrl'
+  }).state('login', {
+    url: '/login/:error',
+    templateUrl: '/js/views/login/login.html',
+    controller: 'loginCtrl'
+  });
+});
+
+angular.module('bottBlog').run(function ($rootScope, $location, $state) {
+  $rootScope.$on("$routeChangeError", function (event, toState, toParams, fromState, fromParams, error) {
+    // We can catch the error thrown when the $requireAuth promise is rejected
+    // and redirect the user back to the home page
+    if (error === "AUTH_REQUIRED") {
+      $state.go("/login");
+    }
   });
 });
 'use strict';
@@ -1435,6 +1462,25 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput']).config(func
 })();
 'use strict';
 
+angular.module('bottBlog').directive('passConfirm', function () {
+  return {
+    require: 'ngModel',
+    scope: {
+      otherModelValue: "=passConfirm"
+    },
+    link: function link(scope, element, attr, ngModel) {
+
+      ngModel.$validators.compareTo = function (modelValue) {
+        return modelValue == otherModelValue;
+      };
+      scope.$watch('otherModelValue', function () {
+        ngModel.$validate();
+      });
+    }
+  };
+});
+'use strict';
+
 angular.module('bottBlog').directive('fileUpload', function () {
   return {
     restrict: 'E',
@@ -1458,12 +1504,11 @@ angular.module('bottBlog').directive('post', function () {
       postData: '=',
       showFile: '='
     },
-    controller: function controller($scope, postService, $firebaseArray, $sce) {
+    controller: function controller($scope, $firebaseArray, $sce) {
       var storage = firebase.storage();
       var storageRef = storage.ref();
 
       $scope.$watch('postData', function () {
-        console.log($scope.postData.file);
         if ($scope.postData.file) {
           var pathReference = storageRef.child($scope.postData.file);
           pathReference.getDownloadURL().then(function (url) {
@@ -1499,14 +1544,67 @@ angular.module('bottBlog').controller('homeCtrl', function ($scope, $firebaseArr
   var storageRef = firebase.storage().ref();
   ref.orderByChild('post_date').limitToLast(10).on("child_added", function (snap) {
     $scope.posts = $firebaseArray(ref);
-    console.log($scope.posts);
   });
 });
 'use strict';
 
-angular.module('bottBlog').controller('newPostCtrl', function ($scope, $firebaseArray, $window) {
+angular.module('bottBlog').controller('loginCtrl', function ($scope, $stateParams, $firebaseAuth, $state) {
+  var auth = $firebaseAuth();
+
+  if ($stateParams.error == 'error') {
+    $scope.isError = true;
+  } else if ($stateParams == 'register') {
+    $scope.register = true;
+  }
+
+  $scope.getRegister = function () {
+    $scope.register = !$scope.register;
+  };
+
+  $scope.createUser = function (email, password) {
+
+    auth.$createUserWithEmailAndPassword(email, password).then(function (firebaseUser) {
+      console.log('signed in as', firebaseUser);
+      $state.go('home');
+    }).catch(function (error) {
+      $state.go('login({error: "error"})');
+    });
+  };
+
+  $scope.loginEmail = function (email, password) {
+    $scope.firebaseUser = null;
+    $scope.error = null;
+
+    auth.$signInWithEmailAndPassword(email, password).then(function (firebaseUser) {
+      console.log('signed in as', firebaseUser);
+      $state.go('home');
+    }).catch(function (error) {
+      $state.go('login({error: "error"})');
+    });
+  };
+
+  $scope.loginGoogle = function () {
+    $scope.firebaseUser = null;
+    $scope.error = null;
+
+    auth.$signInWithPopup("google").then(function (firebaseUser) {
+      console.log('signed in as', firebaseUser);
+      $state.go('home');
+    }).catch(function (error) {
+      $state.go('login({error: "error"})');
+    });
+  };
+});
+'use strict';
+
+angular.module('bottBlog').controller('newPostCtrl', function ($scope, $state, currentAuth, $firebaseArray, $window) {
   var ref = firebase.database().ref('posts/');
   var storageRef = firebase.storage().ref();
+
+  var user = firebase.auth().currentUser;
+  if (user.email !== 'reidnoelle2@gmail.com') {
+    $state.go('home');
+  }
 
   var data = $firebaseArray(ref);
 
@@ -1542,7 +1640,10 @@ angular.module('bottBlog').controller('postCtrl', function ($scope, $firebaseArr
 });
 'use strict';
 
-angular.module('bottBlog').controller('mainCtrl', function ($scope) {});
+angular.module('bottBlog').factory("Auth", ['$firebaseAuth', function ($firebaseAuth) {
+  // var ref = firebase.database().ref()
+  return $firebaseAuth();
+}]);
 'use strict';
 
-angular.module('bottBlog').service('postService', function () {});
+angular.module('bottBlog').controller('mainCtrl', function ($scope) {});
