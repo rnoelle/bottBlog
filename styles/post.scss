@@ -12,10 +12,11 @@
 
 .post-detail {
   article {
-  width: 60vw;
+  width: 50vw;
   max-width: 900px;
+  min-width: 400px;
   margin: 2rem auto;
-  margin-top: 30vh;
+  margin-top: 20vh;
   margin-bottom: 6rem;
 }
   header {

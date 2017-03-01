@@ -1,4 +1,8 @@
-angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput'])
+angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx'])
+  .constant('_', window._)
+  .run(function ($rootScope) {
+    $rootScope._ = window._;
+  })
   .config(function($stateProvider, $urlRouterProvider) {
 
     $urlRouterProvider.otherwise('/');

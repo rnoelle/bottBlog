@@ -66,8 +66,9 @@ p, a, input, li, textarea, button, label {
     text-align: right; }
 
 .article-box article {
-  width: 60vw;
+  width: 40vw;
   max-width: 900px;
+  min-width: 400px;
   margin: 2rem auto 6rem; }
   .article-box article header {
     padding-bottom: 0;
@@ -435,8 +436,9 @@ p, a, input, li, textarea, button, label {
     text-align: right; }
 
 .article-box article {
-  width: 60vw;
+  width: 40vw;
   max-width: 900px;
+  min-width: 400px;
   margin: 2rem auto 6rem; }
   .article-box article header {
     padding-bottom: 0;
@@ -459,10 +461,11 @@ p, a, input, li, textarea, button, label {
   cursor: pointer; }
 
 .post-detail article {
-  width: 60vw;
+  width: 50vw;
   max-width: 900px;
+  min-width: 400px;
   margin: 2rem auto;
-  margin-top: 30vh;
+  margin-top: 20vh;
   margin-bottom: 6rem; }
 
 .post-detail header {

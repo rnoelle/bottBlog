@@ -14,12 +14,13 @@
                 useNativeClamp:     typeof(options.useNativeClamp) != 'undefined' ? options.useNativeClamp : true,
                 splitOnChars:       options.splitOnChars || ['.', '-', '–', '—', ' '], //Split on sentences (periods), hypens, en-dashes, em-dashes, and words (spaces).
                 animate:            options.animate || false,
-                truncationChar:     options.truncationChar || '…',
-                truncationHTML:     options.truncationHTML
+                truncationChar:     options.truncationChar || '',
+                truncationHTML:     options.truncationHTML,
+                originalText:       options.originalText
             },
 
             sty = element.style,
-            originalText = element.innerHTML,
+            originalText = options.originalText,
 
             supportsNativeClamp = typeof(element.style.webkitLineClamp) != 'undefined',
             clampValue = opt.clamp,
@@ -107,6 +108,7 @@
         function getLastChild(elem) {
             //Current element has children, need to go deeper and get last child as a text node
             if (elem.lastChild.children && elem.lastChild.children.length > 0) {
+              console.log('elem', elem);
                 return getLastChild(Array.prototype.slice.call(elem.children).pop());
             }
             //This is the absolute last child, a text node, but something's wrong with it. Remove it and keep trying
@@ -144,6 +146,7 @@
                 //If there are more characters to try, grab the next one
                 if (splitOnChars.length > 0) {
                     splitChar = splitOnChars.shift();
+                    console.log(splitChar, 'splitChar');
                 }
                 //No characters to chunk by. Go character-by-character
                 else {
@@ -156,9 +159,9 @@
             //If there are chunks left to remove, remove the last one and see if
             // the nodeValue fits.
             if (chunks.length > 1) {
-                // console.log('chunks', chunks);
+                console.log('chunks', chunks);
                 lastChunk = chunks.pop();
-                // console.log('lastChunk', lastChunk);
+                console.log('lastChunk', lastChunk);
                 applyEllipsis(target, chunks.join(splitChar));
             }
             //No more chunks can be removed using this character
@@ -211,6 +214,7 @@
         }
 
         function applyEllipsis(elem, str) {
+            console.log(elem, str);
             elem.nodeValue = str + opt.truncationChar;
         }
 
@@ -242,7 +246,6 @@
                 clampedText = truncate(getLastChild(element), height);
             }
         }
-
         return {
             'original': originalText,
             'clamped': clampedText

@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput']).config(function ($stateProvider, $urlRouterProvider) {
+angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx']).constant('_', window._).run(function ($rootScope) {
+  $rootScope._ = window._;
+}).config(function ($stateProvider, $urlRouterProvider) {
 
   $urlRouterProvider.otherwise('/');
 
@@ -65,11 +67,12 @@ angular.module('bottBlog').run(function ($rootScope, $location, $state) {
             useNativeClamp: typeof options.useNativeClamp != 'undefined' ? options.useNativeClamp : true,
             splitOnChars: options.splitOnChars || ['.', '-', '–', '—', ' '], //Split on sentences (periods), hypens, en-dashes, em-dashes, and words (spaces).
             animate: options.animate || false,
-            truncationChar: options.truncationChar || '…',
-            truncationHTML: options.truncationHTML
+            truncationChar: options.truncationChar || '',
+            truncationHTML: options.truncationHTML,
+            originalText: options.originalText
         },
             sty = element.style,
-            originalText = element.innerHTML,
+            originalText = options.originalText,
             supportsNativeClamp = typeof element.style.webkitLineClamp != 'undefined',
             clampValue = opt.clamp,
             isCSSValue = clampValue.indexOf && (clampValue.indexOf('px') > -1 || clampValue.indexOf('em') > -1),
@@ -154,6 +157,7 @@ angular.module('bottBlog').run(function ($rootScope, $location, $state) {
         function getLastChild(elem) {
             //Current element has children, need to go deeper and get last child as a text node
             if (elem.lastChild.children && elem.lastChild.children.length > 0) {
+                console.log('elem', elem);
                 return getLastChild(Array.prototype.slice.call(elem.children).pop());
             }
             //This is the absolute last child, a text node, but something's wrong with it. Remove it and keep trying
@@ -193,6 +197,7 @@ angular.module('bottBlog').run(function ($rootScope, $location, $state) {
                 //If there are more characters to try, grab the next one
                 if (splitOnChars.length > 0) {
                     splitChar = splitOnChars.shift();
+                    console.log(splitChar, 'splitChar');
                 }
                 //No characters to chunk by. Go character-by-character
                 else {
@@ -205,9 +210,9 @@ angular.module('bottBlog').run(function ($rootScope, $location, $state) {
             //If there are chunks left to remove, remove the last one and see if
             // the nodeValue fits.
             if (chunks.length > 1) {
-                // console.log('chunks', chunks);
+                console.log('chunks', chunks);
                 lastChunk = chunks.pop();
-                // console.log('lastChunk', lastChunk);
+                console.log('lastChunk', lastChunk);
                 applyEllipsis(target, chunks.join(splitChar));
             }
             //No more chunks can be removed using this character
@@ -259,6 +264,7 @@ angular.module('bottBlog').run(function ($rootScope, $location, $state) {
         }
 
         function applyEllipsis(elem, str) {
+            console.log(elem, str);
             elem.nodeValue = str + opt.truncationChar;
         }
 
@@ -287,7 +293,6 @@ angular.module('bottBlog').run(function ($rootScope, $location, $state) {
                 clampedText = truncate(getLastChild(element), height);
             }
         }
-
         return {
             'original': originalText,
             'clamped': clampedText
@@ -1523,28 +1528,57 @@ angular.module('bottBlog').directive('post', function () {
     link: function link(scope, element, attr) {
       if (attr.showFile == 'false') {
         var p = element[0].children[0].children[1].children[0];
-        $clamp(p, { clamp: 7 });
+        $clamp(p, {
+          clamp: 7,
+          originalText: scope.postData.text,
+          truncationChar: ''
+        });
       }
-      // console.log(element[0].children[0].children[1].children[0]);
     }
+
   };
 });
 'use strict';
 
-angular.module('bottBlog').directive('searchBar', function () {
+angular.module('bottBlog').directive('searchBar', function ($firebaseArray) {
+  return {
+    scope: {},
+    template: '<input ng-model="val" ng-change="update(val)" />' + '<ul class="suggestions">' + '<li ng-repeat="suggestion in suggestions track by $index | limitTo: 5">' + '<a ui-sref="post({id: suggestion.$id})"' + ' target="_blank">{{ suggestion.title }}</a>' + '</li>' + '</ul>',
+    link: function link(scope) {
+      var ref = firebase.database().ref('posts/');
+      var posts = $firebaseArray(ref);
+
+      scope.update = function (term) {
+        var byTitle = posts.filter(function (el) {
+          return el.title.toLowerCase().indexOf(term.toLowerCase()) > -1;
+        });
+        var byTag = posts.filter(function (el) {
+          if (el.tags) {
+            return el.tags.filter(function (tag) {
+              return tag.text.indexOf(term) > -1;
+            }).length > 0;
+          }
+        });
+        scope.suggestions = _.union(byTitle, byTag);
+      };
+    }
+
+  };
+});
+'use strict';
+
+angular.module('bottBlog').directive('sidebar', function () {
   return {
     restrict: 'E',
-    link: function link(scope, element, attrs) {}
+    templateUrl: './sidebar.html'
+
   };
 });
 'use strict';
 
 angular.module('bottBlog').controller('homeCtrl', function ($scope, $firebaseArray) {
   var ref = firebase.database().ref('posts/');
-  var storageRef = firebase.storage().ref();
-  ref.orderByChild('post_date').limitToLast(10).on("child_added", function (snap) {
-    $scope.posts = $firebaseArray(ref);
-  });
+  $scope.posts = $firebaseArray(ref.orderByChild('post_date').limitToLast(6));
 });
 'use strict';
 
