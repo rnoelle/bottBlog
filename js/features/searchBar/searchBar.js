@@ -2,18 +2,21 @@ angular.module('bottBlog')
   .directive('searchBar', function($firebaseArray) {
     return {
       scope: {},
-      template: '<input ng-model="val" ng-change="update(val)" />' +
+      template: '<input ng-blur="blurred()" ng-model="val" ng-change="update(val)" />' +
         '<ul class="suggestions">' +
         '<li ng-repeat="suggestion in suggestions track by $index | limitTo: 5">' +
         '<a ui-sref="post({id: suggestion.$id})"' +
         ' target="_blank">{{ suggestion.title }}</a>' +
         '</li>' +
         '</ul>',
-      link: function(scope) {
+      link: function(scope, element) {
         var ref = firebase.database().ref('posts/');
         var posts = $firebaseArray(ref);
 
         scope.update = function(term) {
+          if (term.length < 1) {
+            return scope.suggestions = [];
+          }
           var byTitle = posts.filter(function(el) {
             return el.title.toLowerCase().indexOf(term.toLowerCase()) > -1;
           })
@@ -25,6 +28,10 @@ angular.module('bottBlog')
             }
           })
           scope.suggestions = _.union(byTitle, byTag);
+        }
+
+        scope.blurred = function () {
+          scope.suggestions = [];
         }
       }
 

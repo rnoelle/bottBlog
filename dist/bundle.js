@@ -1467,6 +1467,21 @@ angular.module('bottBlog').run(function ($rootScope, $location, $state) {
 })();
 'use strict';
 
+angular.module('bottBlog').directive('fileUpload', function () {
+  return {
+    restrict: 'E',
+    templateUrl: '/js/features/fileUpload/fileUpload.html',
+    link: function link(scope, element, attrs) {
+      $('#file').on('change', function () {
+        console.log(document.getElementById('file').files[0].name);
+        scope.fileName = document.getElementById('file').files[0].name;
+        scope.$apply();
+      });
+    }
+  };
+});
+'use strict';
+
 angular.module('bottBlog').directive('passConfirm', function () {
   return {
     require: 'ngModel',
@@ -1480,21 +1495,6 @@ angular.module('bottBlog').directive('passConfirm', function () {
       };
       scope.$watch('otherModelValue', function () {
         ngModel.$validate();
-      });
-    }
-  };
-});
-'use strict';
-
-angular.module('bottBlog').directive('fileUpload', function () {
-  return {
-    restrict: 'E',
-    templateUrl: '/js/features/fileUpload/fileUpload.html',
-    link: function link(scope, element, attrs) {
-      $('#file').on('change', function () {
-        console.log(document.getElementById('file').files[0].name);
-        scope.fileName = document.getElementById('file').files[0].name;
-        scope.$apply();
       });
     }
   };
@@ -1540,15 +1540,27 @@ angular.module('bottBlog').directive('post', function () {
 });
 'use strict';
 
+angular.module('bottBlog').directive('sidebar', function () {
+  return {
+    restrict: 'E',
+    templateUrl: './js/features/sidebar/sidebar.html'
+
+  };
+});
+'use strict';
+
 angular.module('bottBlog').directive('searchBar', function ($firebaseArray) {
   return {
     scope: {},
-    template: '<input ng-model="val" ng-change="update(val)" />' + '<ul class="suggestions">' + '<li ng-repeat="suggestion in suggestions track by $index | limitTo: 5">' + '<a ui-sref="post({id: suggestion.$id})"' + ' target="_blank">{{ suggestion.title }}</a>' + '</li>' + '</ul>',
-    link: function link(scope) {
+    template: '<input ng-blur="blurred()" ng-model="val" ng-change="update(val)" />' + '<ul class="suggestions">' + '<li ng-repeat="suggestion in suggestions track by $index | limitTo: 5">' + '<a ui-sref="post({id: suggestion.$id})"' + ' target="_blank">{{ suggestion.title }}</a>' + '</li>' + '</ul>',
+    link: function link(scope, element) {
       var ref = firebase.database().ref('posts/');
       var posts = $firebaseArray(ref);
 
       scope.update = function (term) {
+        if (term.length < 1) {
+          return scope.suggestions = [];
+        }
         var byTitle = posts.filter(function (el) {
           return el.title.toLowerCase().indexOf(term.toLowerCase()) > -1;
         });
@@ -1561,16 +1573,11 @@ angular.module('bottBlog').directive('searchBar', function ($firebaseArray) {
         });
         scope.suggestions = _.union(byTitle, byTag);
       };
+
+      scope.blurred = function () {
+        scope.suggestions = [];
+      };
     }
-
-  };
-});
-'use strict';
-
-angular.module('bottBlog').directive('sidebar', function () {
-  return {
-    restrict: 'E',
-    templateUrl: './sidebar.html'
 
   };
 });

@@ -2,7 +2,7 @@ angular.module('bottBlog')
   .directive('sidebar', function () {
     return {
       restrict: 'E',
-      templateUrl: './sidebar.html',
-      
+      templateUrl: './js/features/sidebar/sidebar.html',
+
     }
   })
