@@ -7,31 +7,32 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx'])
 
     $urlRouterProvider.otherwise('/');
 
+    var authResolve = {
+      currentAuth: function(Auth, $state) {
+          return Auth.$requireSignIn().then(function (el) {
+            console.log('email', el.email);
+            if (el.email !== 'reidnoelle2@gmail.com') {
+              $state.go('home');
+            }
+          }).catch(function (error) {
+            if (error == 'AUTH_REQUIRED') {
+              $state.go('login({error:a})')
+            }
+        })
+      }
+    }
+
     $stateProvider
       .state('home', {
         url: '/',
         templateUrl: '/js/views/home/home.html',
-        controller: 'homeCtrl',
-        controllerAs: 'hc'
+        controller: 'homeCtrl'
       })
       .state('newPost', {
         url: '/newPost',
         templateUrl: '/js/views/newPost/newPost.html',
         controller: 'newPostCtrl',
-        resolve: {
-          currentAuth: function(Auth, $state) {
-              return Auth.$requireSignIn().then(function (el) {
-                console.log('email', el.email);
-                if(el.email !== 'reidnoelle2@gmail.com') {
-                  $state.go('home');
-                }
-              }).catch(function (error) {
-                if (error == 'AUTH_REQUIRED') {
-                  $state.go('login({error:a})')
-                }
-            })
-          }
-        }
+        resolve: authResolve
       })
       .state('post', {
         url: '/post/:id',
@@ -43,6 +44,25 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx'])
         templateUrl: '/js/views/login/login.html',
         controller: 'loginCtrl'
       })
+      .state('about', {
+        url: '/about',
+        templateUrl: '/js/views/about/about.html',
+        // controller: 'aboutCtrl'
+      })
+      .state('manage', {
+        url: '/manage',
+        templateUrl: '/js/views/manage/manage.html',
+        controller: 'manageCtrl',
+        resolve: authResolve
+
+      })
+      .state('editPost', {
+        url: '/editPost/:id',
+        templateUrl: '/js/views/editPost/editPost.html',
+        controller: 'editCtrl',
+        resolve: authResolve
+      })
+
 
 
   })

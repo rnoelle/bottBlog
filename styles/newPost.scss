@@ -13,7 +13,7 @@
   padding: 10px;
   display: flex;
   justify-content: center;
-  margin: 5vh auto;
+  margin: 10vh auto;
   form {
     display: flex;
     flex-direction: column;
@@ -38,9 +38,10 @@
         position: absolute;
       }
     }
+
     input,
     tags-input,
-    textarea {
+    textarea, {
       max-width: 600px;
       margin-bottom: 0.5rem;
       &[type=text] {
@@ -56,6 +57,7 @@
         color: white;
         border-radius: 2px;
         border: none;
+        clear: both;
       }
       &.new-post-title {
         box-shadow: 1px 1px 1px 0 lightgray inset;
@@ -79,5 +81,17 @@
         padding-left: .5rem;
       }
     }
+  }
+}
+.file-section {
+  button {
+    padding: 0.5rem 3rem;
+    background: none;
+    margin: 0 auto;
+    background: $primary;
+    color: white;
+    border-radius: 2px;
+    border: none;
+    display: block;
   }
 }

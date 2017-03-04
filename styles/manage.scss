@@ -1,0 +1,48 @@
+.manage-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  .post-grid {
+    margin-top: 20vh;
+    width: 70vw;
+    min-width: 500px;
+    .manage-post {
+      &:hover {
+        transform: translate(0, -1px);
+        box-shadow: 0 .5px 1px gray;
+      }
+      &:nth-child(2n+1) {
+        background: #eee;
+      }
+      div {
+        display: inline-block;
+        padding: .5rem;
+        font-size: 1.25rem;
+        color: #3a3a3a;
+        a {
+          color: #3a3a3a;
+          text-decoration: none;
+          &:hover {
+             text-decoration: underline;
+          }
+        }
+        &:nth-child(1) {
+          width: 70%;
+        }
+        &:nth-child(2) {
+          width: 15%;
+        }
+        i {
+          margin-left: 1rem;
+          color: #777;
+          cursor: pointer;
+          &:hover {
+            opacity: .85;
+          }
+        }
+      }
+    }
+
+  }
+}

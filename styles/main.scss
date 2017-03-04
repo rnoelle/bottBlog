@@ -19,6 +19,33 @@
     li {
       margin-right: 1em;
       color: #3a3a3a;
+      cursor: pointer;
+      a {
+        text-decoration: none;
+        color: #3a3a3a;
+        &:hover {
+          color: #6a6a6a;
+        }
+      }
+      &:hover {
+        color: #6a6a6a;
+      }
+    }
+  }
+}
+
+.manage-nav {
+  position: fixed;
+  bottom: 20vh;
+  left: 0;
+  li {
+    color: #eee;
+    background: linear-gradient(to right, #646464 0%,#494848 100%);
+    padding: 1.5rem 2rem;
+    border: .5px solid #666;
+    cursor: pointer;
+    &:hover {
+      opacity: .65;
     }
   }
 }

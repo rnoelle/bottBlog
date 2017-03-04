@@ -6,29 +6,30 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx']).const
 
   $urlRouterProvider.otherwise('/');
 
+  var authResolve = {
+    currentAuth: function currentAuth(Auth, $state) {
+      return Auth.$requireSignIn().then(function (el) {
+        console.log('email', el.email);
+        if (el.email !== 'reidnoelle2@gmail.com') {
+          $state.go('home');
+        }
+      }).catch(function (error) {
+        if (error == 'AUTH_REQUIRED') {
+          $state.go('login({error:a})');
+        }
+      });
+    }
+  };
+
   $stateProvider.state('home', {
     url: '/',
     templateUrl: '/js/views/home/home.html',
-    controller: 'homeCtrl',
-    controllerAs: 'hc'
+    controller: 'homeCtrl'
   }).state('newPost', {
     url: '/newPost',
     templateUrl: '/js/views/newPost/newPost.html',
     controller: 'newPostCtrl',
-    resolve: {
-      currentAuth: function currentAuth(Auth, $state) {
-        return Auth.$requireSignIn().then(function (el) {
-          console.log('email', el.email);
-          if (el.email !== 'reidnoelle2@gmail.com') {
-            $state.go('home');
-          }
-        }).catch(function (error) {
-          if (error == 'AUTH_REQUIRED') {
-            $state.go('login({error:a})');
-          }
-        });
-      }
-    }
+    resolve: authResolve
   }).state('post', {
     url: '/post/:id',
     templateUrl: '/js/views/post/post.html',
@@ -37,6 +38,20 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx']).const
     url: '/login/:error',
     templateUrl: '/js/views/login/login.html',
     controller: 'loginCtrl'
+  }).state('about', {
+    url: '/about',
+    templateUrl: '/js/views/about/about.html'
+  }).state('manage', {
+    url: '/manage',
+    templateUrl: '/js/views/manage/manage.html',
+    controller: 'manageCtrl',
+    resolve: authResolve
+
+  }).state('editPost', {
+    url: '/editPost/:id',
+    templateUrl: '/js/views/editPost/editPost.html',
+    controller: 'editCtrl',
+    resolve: authResolve
   });
 });
 
@@ -1467,6 +1482,14 @@ angular.module('bottBlog').run(function ($rootScope, $location, $state) {
 })();
 'use strict';
 
+angular.module('bottBlog').directive('adminNav', function () {
+  return {
+    restrict: 'EA',
+    templateUrl: '/js/features/adminNav/adminNav.html'
+  };
+});
+'use strict';
+
 angular.module('bottBlog').directive('fileUpload', function () {
   return {
     restrict: 'E',
@@ -1540,10 +1563,41 @@ angular.module('bottBlog').directive('post', function () {
 });
 'use strict';
 
-angular.module('bottBlog').directive('sidebar', function () {
+angular.module('bottBlog').directive('sidebar', function ($firebaseArray) {
   return {
     restrict: 'E',
-    templateUrl: './js/features/sidebar/sidebar.html'
+    templateUrl: './js/features/sidebar/sidebar.html',
+    controller: function controller($scope) {
+      var ref = firebase.database().ref('posts/');
+      var posts = $firebaseArray(ref);
+      var tags = [];
+
+      posts.$loaded().then(function (postsArray) {
+        // handle tags
+        postsArray.map(function (e) {
+          tags = _.union(tags, e.tags);
+        });
+        tags = _.union(tags.map(function (e) {
+          return e.text;
+        }));
+        $scope.tags = tags;
+
+        // handle searchByTag
+        $scope.searchByTag = function (tag) {
+          var filteredPosts = posts.filter(function (el) {
+            if (!el.tags) return false;
+
+            for (var i = 0; i < el.tags.length; i++) {
+              if (el.tags[i].text == tag) {
+                return true;
+              }
+            }
+            return false;
+          });
+          $scope.posts = filteredPosts;
+        };
+      });
+    }
 
   };
 });
@@ -1583,9 +1637,60 @@ angular.module('bottBlog').directive('searchBar', function ($firebaseArray) {
 });
 'use strict';
 
+angular.module('bottBlog').controller('aboutCtrl', function ($scope) {});
+'use strict';
+
 angular.module('bottBlog').controller('homeCtrl', function ($scope, $firebaseArray) {
   var ref = firebase.database().ref('posts/');
   $scope.posts = $firebaseArray(ref.orderByChild('post_date').limitToLast(6));
+});
+'use strict';
+
+angular.module('bottBlog').controller('editCtrl', function ($scope, $firebaseArray, $stateParams, $sce) {
+
+  var storage = firebase.storage();
+  var storageRef = storage.ref();
+
+  firebase.database().ref('/posts/' + $stateParams.id).once('value').then(function (snap) {
+
+    $scope.post = snap.val();
+
+    if ($scope.post.file) {
+      var pathReference = storageRef.child($scope.post.file);
+      pathReference.getDownloadURL().then(function (url) {
+        $scope.fileUrl = $sce.trustAsResourceUrl(url);
+        $scope.$apply();
+      }).catch(function (err) {
+        console.log(err);
+      });
+    }
+    $scope.$apply();
+  });
+
+  $scope.deleteFile = function () {
+    $scope.deleteFile = true;
+    $scope.fileUrl = null;
+  };
+
+  $scope.editPost = function () {
+    var ref = firebase.database().ref('/posts/' + $stateParams.id);
+    var postToEdit = $firebaseArray(ref);
+
+    if (!$scope.post) return;
+    var theFile = document.getElementById('file').files[0];
+    var postRef = storageRef.child($scope.post.title + $scope.post.post_date);
+    if (theFile) {
+      postRef.put(theFile).then(function (snap) {
+        $scope.post.file = snap.a.fullPath;
+        postToEdit.$save($scope.post);
+
+        console.log('saved with new file!');
+      });
+    } else {
+      postToEdit.$save($scope.post);
+      console.log('saved!', $scope.post);
+    }
+  };
 });
 'use strict';
 
@@ -1620,6 +1725,7 @@ angular.module('bottBlog').controller('loginCtrl', function ($scope, $stateParam
       console.log('signed in as', firebaseUser);
       $state.go('home');
     }).catch(function (error) {
+      console.log('error', error);
       $state.go('login({error: "error"})');
     });
   };
@@ -1632,9 +1738,17 @@ angular.module('bottBlog').controller('loginCtrl', function ($scope, $stateParam
       console.log('signed in as', firebaseUser);
       $state.go('home');
     }).catch(function (error) {
+      console.log('error', error);
       $state.go('login({error: "error"})');
     });
   };
+});
+'use strict';
+
+angular.module('bottBlog').controller('manageCtrl', function ($scope, $firebaseArray) {
+
+  var ref = firebase.database().ref('posts/');
+  $scope.posts = $firebaseArray(ref.orderByChild('post_date'));
 });
 'use strict';
 
@@ -1672,7 +1786,6 @@ angular.module('bottBlog').controller('newPostCtrl', function ($scope, $state, c
 'use strict';
 
 angular.module('bottBlog').controller('postCtrl', function ($scope, $firebaseArray, $stateParams) {
-  $scope.post = 'lalala';
   firebase.database().ref('/posts/' + $stateParams.id).once('value').then(function (snap) {
     $scope.post = snap.val();
     console.log($scope.post);

@@ -2,3 +2,8 @@
   <span><i class="fa fa-search"></i></span>
   <search-bar></search-bar>
 </div>
+
+<div class="tags">
+  <h3>Search by Tag</h3>
+  <span ng-repeat="tag in tags" ng-click="searchByTag(tag)">{{tag}} </span>
+</div>

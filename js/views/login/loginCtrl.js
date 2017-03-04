@@ -11,7 +11,7 @@ angular.module('bottBlog')
     $scope.getRegister = function () {
       $scope.register = !$scope.register;
     }
-    
+
     $scope.createUser = function (email, password) {
 
 
@@ -31,6 +31,7 @@ angular.module('bottBlog')
         console.log('signed in as', firebaseUser);
         $state.go('home')
       }).catch(function (error) {
+        console.log('error', error);
         $state.go('login({error: "error"})')
       })
     }
@@ -43,6 +44,7 @@ angular.module('bottBlog')
         console.log('signed in as', firebaseUser);
         $state.go('home')
       }).catch(function (error) {
+        console.log('error', error);
         $state.go('login({error: "error"})')
       })
     }

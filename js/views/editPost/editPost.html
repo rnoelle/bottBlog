@@ -1,0 +1,18 @@
+<div class="new-post-form">
+  <form ng-submit="editPost()">
+    <h1>Edit Post</h1>
+    <input class="new-post-title" type="text" ng-model="post.title" placeholder="title">
+    <textarea ng-model="post.text" placeholder="text here"></textarea>
+    <section class="file-section" ng-if="fileUrl">
+      <h4>File Attached: </h4>
+      <iframe id="iframe" ng-src="{{fileUrl}}" width="500" height="600"></iframe>
+      <button type="button" ng-click="deleteFile()">Remove File</button>
+    </section>
+    <file-upload ng-hide="fileUrl"></file-upload>
+
+    <tags-input ng-model="post.tags"></tags-input>
+
+    <input type="submit" value="Save Changes">
+  </form>
+</div>
+<admin-nav></admin-nav>
