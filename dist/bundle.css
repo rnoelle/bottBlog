@@ -300,19 +300,35 @@ p, a, input, li, textarea, button, label {
   width: 100vw;
   height: 100vh;
   display: flex;
-  justify-content: center; }
+  align-items: center;
+  flex-direction: column; }
+  .manage-wrapper .button-div {
+    width: 70vw;
+    min-width: 500px; }
+    .manage-wrapper .button-div button {
+      float: right;
+      margin-top: 20vh;
+      padding: 0.5rem 1.5rem;
+      width: 10em;
+      background: #5121b8;
+      color: white;
+      position: relative;
+      border: none;
+      cursor: pointer; }
+      .manage-wrapper .button-div button:hover {
+        opacity: 0.85; }
   .manage-wrapper .post-grid {
-    margin-top: 20vh;
+    margin-top: 1rem;
     width: 70vw;
     min-width: 500px; }
     .manage-wrapper .post-grid .manage-post:hover {
       transform: translate(0, -1px);
-      box-shadow: 0 .5px 1px gray; }
+      box-shadow: 0 0.5px 1px gray; }
     .manage-wrapper .post-grid .manage-post:nth-child(2n+1) {
       background: #eee; }
     .manage-wrapper .post-grid .manage-post div {
       display: inline-block;
-      padding: .5rem;
+      padding: 0.5rem;
       font-size: 1.25rem;
       color: #3a3a3a; }
       .manage-wrapper .post-grid .manage-post div a {
@@ -329,7 +345,36 @@ p, a, input, li, textarea, button, label {
         color: #777;
         cursor: pointer; }
         .manage-wrapper .post-grid .manage-post div i:hover {
-          opacity: .85; }
+          opacity: 0.85; }
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(77, 77, 77, 0.32);
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+  .modal > div {
+    background: #eee;
+    color: #222;
+    border-radius: 3px;
+    box-shadow: 1px 1px 2px #666;
+    padding: 2rem; }
+    .modal > div h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem; }
+    .modal > div button {
+      padding: 0.5rem 1.5rem;
+      background: #5121b8;
+      color: white;
+      position: relative;
+      border: none;
+      cursor: pointer; }
+      .modal > div button:hover {
+        opacity: 0.85; }
 
 @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,700|Slabo+27px");
 html, body, div, span, applet, object, iframe,
@@ -408,7 +453,11 @@ p, a, input, li, textarea, button, label {
       background: #5121b8;
       color: white;
       position: relative;
-      font-size: .75rem; }
+      font-size: .75rem;
+      border: none;
+      cursor: pointer; }
+      .new-post-form form label:hover {
+        opacity: .85; }
       .new-post-form form label #file {
         height: 0.01px;
         width: 0.01px;
@@ -435,7 +484,12 @@ p, a, input, li, textarea, button, label {
         color: white;
         border-radius: 2px;
         border: none;
-        clear: both; }
+        clear: both;
+        cursor: pointer; }
+        .new-post-form form input[type=submit]:hover,
+        .new-post-form form tags-input[type=submit]:hover,
+        .new-post-form form textarea[type=submit]:hover {
+          opacity: .85; }
       .new-post-form form input.new-post-title,
       .new-post-form form tags-input.new-post-title,
       .new-post-form form textarea.new-post-title {

@@ -24,6 +24,10 @@ angular.module('bottBlog')
 
         })
 
+        $scope.comment = function () {
+          
+        }
+
       },
       link: function(scope, element, attr) {
         if (attr.showFile == 'false') {

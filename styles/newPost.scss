@@ -31,6 +31,11 @@
       color: white;
       position: relative;
       font-size: .75rem;
+      border: none;
+      cursor: pointer;
+      &:hover {
+        opacity: .85;
+      }
       #file {
         height: 0.01px;
         width: 0.01px;
@@ -58,6 +63,10 @@
         border-radius: 2px;
         border: none;
         clear: both;
+        cursor: pointer;
+        &:hover {
+          opacity: .85;
+        }
       }
       &.new-post-title {
         box-shadow: 1px 1px 1px 0 lightgray inset;

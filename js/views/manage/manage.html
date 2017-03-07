@@ -1,6 +1,11 @@
 <admin-nav></admin-nav>
 
+
 <div class="manage-wrapper">
+  <div class="button-div">
+    <button ui-sref="newPost">New Post</button>
+  </div>
+
   <div class="post-grid">
     <div class="manage-post" ng-repeat="post in posts">
       <div>
@@ -16,5 +21,13 @@
         <i class="fa fa-trash" ng-click="deletePost(post.$id)"></i>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal" ng-show="modalOpen">
+  <div>
+    <h1>Would you like to delete this post?</h1>
+    <button class="red" ng-click="delete()">Delete</button>
+    <button class="gray" ng-click="cancel()">Cancel</button>
   </div>
 </div>

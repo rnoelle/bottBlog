@@ -3,11 +3,6 @@ angular.module('bottBlog')
     var ref = firebase.database().ref('posts/');
     var storageRef = firebase.storage().ref();
 
-    var user = firebase.auth().currentUser;
-    if (user.email !== 'reidnoelle2@gmail.com') {
-      $state.go('home')
-    }
-
     var data = $firebaseArray(ref);
 
 
@@ -22,7 +17,7 @@ angular.module('bottBlog')
         post.file = snap.a.fullPath;
           data.$add(post)
           $scope.post = {}
-          $window.location.reload();
+          $state.go('manage')
         })
 
       } else {

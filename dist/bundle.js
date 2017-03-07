@@ -1490,21 +1490,6 @@ angular.module('bottBlog').directive('adminNav', function () {
 });
 'use strict';
 
-angular.module('bottBlog').directive('fileUpload', function () {
-  return {
-    restrict: 'E',
-    templateUrl: '/js/features/fileUpload/fileUpload.html',
-    link: function link(scope, element, attrs) {
-      $('#file').on('change', function () {
-        console.log(document.getElementById('file').files[0].name);
-        scope.fileName = document.getElementById('file').files[0].name;
-        scope.$apply();
-      });
-    }
-  };
-});
-'use strict';
-
 angular.module('bottBlog').directive('passConfirm', function () {
   return {
     require: 'ngModel',
@@ -1518,6 +1503,21 @@ angular.module('bottBlog').directive('passConfirm', function () {
       };
       scope.$watch('otherModelValue', function () {
         ngModel.$validate();
+      });
+    }
+  };
+});
+'use strict';
+
+angular.module('bottBlog').directive('fileUpload', function () {
+  return {
+    restrict: 'E',
+    templateUrl: '/js/features/fileUpload/fileUpload.html',
+    link: function link(scope, element, attrs) {
+      $('#file').on('change', function () {
+        console.log(document.getElementById('file').files[0].name);
+        scope.fileName = document.getElementById('file').files[0].name;
+        scope.$apply();
       });
     }
   };
@@ -1547,6 +1547,8 @@ angular.module('bottBlog').directive('post', function () {
           });
         }
       });
+
+      $scope.comment = function () {};
     },
     link: function link(scope, element, attr) {
       if (attr.showFile == 'false') {
@@ -1557,6 +1559,40 @@ angular.module('bottBlog').directive('post', function () {
           truncationChar: ''
         });
       }
+    }
+
+  };
+});
+'use strict';
+
+angular.module('bottBlog').directive('searchBar', function ($firebaseArray) {
+  return {
+    scope: {},
+    template: '<input ng-blur="blurred()" ng-model="val" ng-change="update(val)" />' + '<ul class="suggestions">' + '<li ng-repeat="suggestion in suggestions track by $index | limitTo: 5">' + '<a ui-sref="post({id: suggestion.$id})"' + ' target="_blank">{{ suggestion.title }}</a>' + '</li>' + '</ul>',
+    link: function link(scope, element) {
+      var ref = firebase.database().ref('posts/');
+      var posts = $firebaseArray(ref);
+
+      scope.update = function (term) {
+        if (term.length < 1) {
+          return scope.suggestions = [];
+        }
+        var byTitle = posts.filter(function (el) {
+          return el.title.toLowerCase().indexOf(term.toLowerCase()) > -1;
+        });
+        var byTag = posts.filter(function (el) {
+          if (el.tags) {
+            return el.tags.filter(function (tag) {
+              return tag.text.indexOf(term) > -1;
+            }).length > 0;
+          }
+        });
+        scope.suggestions = _.union(byTitle, byTag);
+      };
+
+      scope.blurred = function () {
+        scope.suggestions = [];
+      };
     }
 
   };
@@ -1603,50 +1639,10 @@ angular.module('bottBlog').directive('sidebar', function ($firebaseArray) {
 });
 'use strict';
 
-angular.module('bottBlog').directive('searchBar', function ($firebaseArray) {
-  return {
-    scope: {},
-    template: '<input ng-blur="blurred()" ng-model="val" ng-change="update(val)" />' + '<ul class="suggestions">' + '<li ng-repeat="suggestion in suggestions track by $index | limitTo: 5">' + '<a ui-sref="post({id: suggestion.$id})"' + ' target="_blank">{{ suggestion.title }}</a>' + '</li>' + '</ul>',
-    link: function link(scope, element) {
-      var ref = firebase.database().ref('posts/');
-      var posts = $firebaseArray(ref);
-
-      scope.update = function (term) {
-        if (term.length < 1) {
-          return scope.suggestions = [];
-        }
-        var byTitle = posts.filter(function (el) {
-          return el.title.toLowerCase().indexOf(term.toLowerCase()) > -1;
-        });
-        var byTag = posts.filter(function (el) {
-          if (el.tags) {
-            return el.tags.filter(function (tag) {
-              return tag.text.indexOf(term) > -1;
-            }).length > 0;
-          }
-        });
-        scope.suggestions = _.union(byTitle, byTag);
-      };
-
-      scope.blurred = function () {
-        scope.suggestions = [];
-      };
-    }
-
-  };
-});
-'use strict';
-
 angular.module('bottBlog').controller('aboutCtrl', function ($scope) {});
 'use strict';
 
-angular.module('bottBlog').controller('homeCtrl', function ($scope, $firebaseArray) {
-  var ref = firebase.database().ref('posts/');
-  $scope.posts = $firebaseArray(ref.orderByChild('post_date').limitToLast(6));
-});
-'use strict';
-
-angular.module('bottBlog').controller('editCtrl', function ($scope, $firebaseArray, $stateParams, $sce) {
+angular.module('bottBlog').controller('editCtrl', function ($scope, $firebaseObject, $stateParams, $sce, $state) {
 
   var storage = firebase.storage();
   var storageRef = storage.ref();
@@ -1661,7 +1657,7 @@ angular.module('bottBlog').controller('editCtrl', function ($scope, $firebaseArr
         $scope.fileUrl = $sce.trustAsResourceUrl(url);
         $scope.$apply();
       }).catch(function (err) {
-        console.log(err);
+        console.log('error getting file', err);
       });
     }
     $scope.$apply();
@@ -1674,23 +1670,49 @@ angular.module('bottBlog').controller('editCtrl', function ($scope, $firebaseArr
 
   $scope.editPost = function () {
     var ref = firebase.database().ref('/posts/' + $stateParams.id);
-    var postToEdit = $firebaseArray(ref);
+    var postToEdit = $firebaseObject(ref);
 
     if (!$scope.post) return;
     var theFile = document.getElementById('file').files[0];
     var postRef = storageRef.child($scope.post.title + $scope.post.post_date);
+
+    if ($scope.deleteFile) {
+      var pathReference = storageRef.child($scope.post.title + $scope.post.post_date);
+      pathReference.delete();
+      $scope.post.file = null;
+    }
+    //Final step
     if (theFile) {
+
       postRef.put(theFile).then(function (snap) {
         $scope.post.file = snap.a.fullPath;
-        postToEdit.$save($scope.post);
-
-        console.log('saved with new file!');
+        for (var prop in $scope.post) {
+          postToEdit[prop] = $scope.post[prop];
+        }
+        postToEdit.$save().then(function (ref) {
+          $state.go('manage');
+        }, function (error) {
+          alert('There was an error with the update.', error);
+        });
       });
     } else {
-      postToEdit.$save($scope.post);
-      console.log('saved!', $scope.post);
+
+      for (var prop in $scope.post) {
+        postToEdit[prop] = $scope.post[prop];
+      }
+      postToEdit.$save().then(function (ref) {
+        $state.go('manage');
+      }, function (error) {
+        alert('There was an error with the update.', error);
+      });
     }
   };
+});
+'use strict';
+
+angular.module('bottBlog').controller('homeCtrl', function ($scope, $firebaseArray) {
+  var ref = firebase.database().ref('posts/');
+  $scope.posts = $firebaseArray(ref.orderByChild('post_date').limitToLast(6));
 });
 'use strict';
 
@@ -1745,21 +1767,33 @@ angular.module('bottBlog').controller('loginCtrl', function ($scope, $stateParam
 });
 'use strict';
 
-angular.module('bottBlog').controller('manageCtrl', function ($scope, $firebaseArray) {
+angular.module('bottBlog').controller('manageCtrl', function ($scope, $firebaseArray, $firebaseObject, $window) {
 
   var ref = firebase.database().ref('posts/');
   $scope.posts = $firebaseArray(ref.orderByChild('post_date'));
+
+  $scope.deletePost = function (id) {
+    $scope.currentPost = id;
+    $scope.modalOpen = true;
+  };
+
+  $scope.delete = function () {
+    var post = $firebaseObject(ref.child($scope.currentPost));
+    post.$remove().then(function () {
+      $window.location.reload();
+    });
+  };
+
+  $scope.cancel = function () {
+    delete $scope.currentPost;
+    $scope.modalOpen = false;
+  };
 });
 'use strict';
 
 angular.module('bottBlog').controller('newPostCtrl', function ($scope, $state, currentAuth, $firebaseArray, $window) {
   var ref = firebase.database().ref('posts/');
   var storageRef = firebase.storage().ref();
-
-  var user = firebase.auth().currentUser;
-  if (user.email !== 'reidnoelle2@gmail.com') {
-    $state.go('home');
-  }
 
   var data = $firebaseArray(ref);
 
@@ -1774,7 +1808,7 @@ angular.module('bottBlog').controller('newPostCtrl', function ($scope, $state, c
         post.file = snap.a.fullPath;
         data.$add(post);
         $scope.post = {};
-        $window.location.reload();
+        $state.go('manage');
       });
     } else {
       console.log(post);
