@@ -10,3 +10,16 @@ $homePrime: rgb(43, 69, 149);
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
 }
+
+@mixin button {
+  padding: 0.5rem 3rem;
+  background: none;
+  background: $primary;
+  color: white;
+  border-radius: 2px;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    opacity: .85;
+  }
+}

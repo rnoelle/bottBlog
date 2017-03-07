@@ -1,4 +1,4 @@
-angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx'])
+angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'td.easySocialShare'])
   .constant('_', window._)
   .run(function ($rootScope) {
     $rootScope._ = window._;
@@ -16,7 +16,7 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx'])
             }
           }).catch(function (error) {
             if (error == 'AUTH_REQUIRED') {
-              $state.go('login({error:a})')
+              $state.go('login')
             }
         })
       }

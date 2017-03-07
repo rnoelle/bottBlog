@@ -14,8 +14,21 @@
   <h6>{{postData.post_date | date: 'medium'}}</h6>
   <hr>
   <div>
-    <spanng-click="comment()">comment</span> <span>share</span>
+    <span ng-click="comment()">comment</span>
+    <span ng-click="sharing = !sharing">share</span>
+    <span ng-show="sharing" class="share-links" share-square="true" share-links="Facebook, Twitter, LinkedIn, Google-Plus" share-title="{{postData.title}}">
+      </span>
   </div>
   <hr>
-
+  <form class="comment" ng-show="commenting" ng-submit="submitComment()">
+    <textarea ng-model="newComment" placeholder="Type comment here"></textarea>
+    <input type="submit" value="Comment">
+  </form>
+  <section>
+    <div class="comment-unit" ng-repeat="comment in comments">
+      <img ng-src="{{comment.user.photoURL || 'https://api.adorable.io/avatars/285/' + comment.user.uid + '.png'}}" alt="{{comment.user.displayName}}">
+      <h4>{{comment.user.displayName || comment.user.email}} <span>{{comment.comment_date | date}}</span></h4>
+      <p>{{comment.text}}</p>
+    </div>
+  </section>
 </article>

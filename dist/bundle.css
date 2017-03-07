@@ -175,31 +175,35 @@ aside {
   .login-page p {
     font-size: .55rem; }
   .login-page > div {
-    padding: 2rem; }
+    padding: 2rem;
+    text-align: center; }
     .login-page > div form {
       display: flex;
       flex-direction: column; }
       .login-page > div form input {
-        margin: 1px 0;
-        border: solid #ddd .5px; }
+        margin: 2px 0;
+        border: solid #ddd .5px;
+        padding: .5rem; }
       .login-page > div form input[type='text'], .login-page > div form input[type='password'] {
         width: 25vw;
-        padding: .25rem; }
+        max-width: 300px;
+        font-size: 1rem; }
       .login-page > div form input[type="submit"] {
         margin-top: 3px;
-        padding: .25rem;
         cursor: pointer; }
         .login-page > div form input[type="submit"]:hover {
           opacity: .85; }
       .login-page > div form .pass-confirm {
-        color: red; }
+        color: red;
+        font-family: 'Arial', sans-serif;
+        font-size: .75rem;
+        margin: 3px 0; }
   .login-page h4, .login-page p {
     text-align: center;
     margin: .5rem 0; }
   .login-page img {
-    height: 2rem;
+    width: 12vw;
     margin: auto;
-    transform: translate(50%, 0);
     cursor: pointer; }
     .login-page img:hover {
       opacity: .85; }
@@ -709,20 +713,37 @@ aside {
   left: 10vw;
   cursor: pointer; }
 
+.post-detail .comment input {
+  padding: 0.5rem 3rem;
+  background: none;
+  background: #5121b8;
+  color: white;
+  border-radius: 2px;
+  border: none;
+  cursor: pointer; }
+  .post-detail .comment input:hover {
+    opacity: .85; }
+
+.post-detail .comment textarea {
+  width: 50%;
+  min-width: 300px;
+  display: block;
+  height: 7em;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem; }
+
 .post-detail article {
   width: 50vw;
   max-width: 900px;
   min-width: 400px;
-  margin: 2rem auto;
-  margin-top: 20vh;
-  margin-bottom: 6rem; }
+  margin: 20vh auto 6rem; }
 
 .post-detail header {
   padding-bottom: 0;
   font-size: 1.5rem; }
   .post-detail header i {
     font-size: 1rem;
-    margin-right: .5rem;
+    margin-right: 0.5rem;
     transform: translate(0, -20%); }
 
 .post-detail section {
@@ -738,4 +759,29 @@ aside {
     margin-bottom: 1rem; }
 
 .post-detail hr {
-  border: #ddd .5px solid; }
+  border: #ddd 0.5px solid; }
+
+.comment-unit {
+  padding: 1rem;
+  box-shadow: 1px 1px 2px #cdcdcd;
+  width: 75%;
+  margin-bottom: 4px; }
+  .comment-unit img {
+    height: 3rem;
+    float: left;
+    margin-right: 0.5rem;
+    -webkit-clip-path: circle(50% at 50% 50%);
+    clip-path: circle(50% at 50% 50%); }
+  .comment-unit h4 {
+    color: #333;
+    font-weight: bold; }
+    .comment-unit h4 span {
+      margin-left: 0.75rem;
+      font-weight: normal; }
+
+.share-links a {
+  color: #666;
+  text-decoration: none;
+  margin-right: .25rem; }
+  .share-links a:hover {
+    opacity: 0.85; }

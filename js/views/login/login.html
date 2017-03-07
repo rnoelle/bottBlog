@@ -20,7 +20,7 @@
     <input type="text" placeholder="Email" ng-model="email" required>
     <input type="password"  placeholder="Password" ng-model="password" required>
     <input type="password" name="password" placeholder="Confirm Password"
-      required
+      ng-model="passwordConfirm" required
       pass-confirm="password">
       <div ng-messages="registrationForm.confirmPassword.$error">
         <div ng-show="newUserForm.password.$invalid && !newUserForm.password.$pristine"
@@ -30,6 +30,9 @@
       </div>
     <input type="submit" value="Sign Up">
   </form>
+  <h4>- or -</h4>
+  <img src="../../../styles/assets/google-btn.png"
+    ng-click="loginGoogle()">
   <p>Already have an account? <a ng-click="getRegister()">Login Here</a></p>
 </div>
 

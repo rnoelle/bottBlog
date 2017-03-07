@@ -19,7 +19,7 @@ angular.module('bottBlog')
         console.log('signed in as', firebaseUser);
         $state.go('home')
       }).catch(function (error) {
-        $state.go('login({error: "error"})')
+        alert(error)
       })
     }
 
@@ -32,7 +32,8 @@ angular.module('bottBlog')
         $state.go('home')
       }).catch(function (error) {
         console.log('error', error);
-        $state.go('login({error: "error"})')
+        alert(error)
+
       })
     }
 
@@ -45,7 +46,8 @@ angular.module('bottBlog')
         $state.go('home')
       }).catch(function (error) {
         console.log('error', error);
-        $state.go('login({error: "error"})')
+        alert(error)
+
       })
     }
 

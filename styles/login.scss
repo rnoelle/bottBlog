@@ -12,20 +12,22 @@
   }
   & > div {
     padding: 2rem;
+    text-align: center;
     form {
     display: flex;
     flex-direction: column;
       input {
-        margin: 1px 0;
+        margin: 2px 0;
         border: solid #ddd .5px;
+        padding: .5rem;
       }
       input[type='text'], input[type='password'] {
         width: 25vw;
-        padding: .25rem;
+        max-width: 300px;
+        font-size: 1rem;
       }
       input[type="submit"] {
         margin-top: 3px;
-        padding: .25rem;
         cursor: pointer;
         &:hover {
           opacity: .85;
@@ -33,6 +35,9 @@
       }
       .pass-confirm {
         color: red;
+        font-family: 'Arial', sans-serif;
+        font-size: .75rem;
+        margin: 3px 0;
       }
     }
   }
@@ -41,9 +46,8 @@
     margin: .5rem 0;
   }
   img {
-    height: 2rem;
+    width: 12vw;
     margin: auto;
-    transform: translate(50%, 0);
     cursor: pointer;
     &:hover {
       opacity: .85;

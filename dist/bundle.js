@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx']).constant('_', window._).run(function ($rootScope) {
+angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'td.easySocialShare']).constant('_', window._).run(function ($rootScope) {
   $rootScope._ = window._;
 }).config(function ($stateProvider, $urlRouterProvider) {
 
@@ -15,7 +15,7 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'rx']).const
         }
       }).catch(function (error) {
         if (error == 'AUTH_REQUIRED') {
-          $state.go('login({error:a})');
+          $state.go('login');
         }
       });
     }
@@ -1499,7 +1499,7 @@ angular.module('bottBlog').directive('passConfirm', function () {
     link: function link(scope, element, attr, ngModel) {
 
       ngModel.$validators.compareTo = function (modelValue) {
-        return modelValue == otherModelValue;
+        return modelValue == scope.otherModelValue;
       };
       scope.$watch('otherModelValue', function () {
         ngModel.$validate();
@@ -1507,6 +1507,60 @@ angular.module('bottBlog').directive('passConfirm', function () {
     }
   };
 });
+'use strict';
+
+angular.module('td.easySocialShare', []).directive('shareLinks', ['$location', function ($location) {
+  return {
+    link: function link(scope, elem, attrs) {
+      var i,
+          sites = ['twitter', 'facebook', 'linkedin', 'google-plus'],
+          theLink,
+          links = attrs.shareLinks.toLowerCase().split(','),
+          pageLink = encodeURIComponent($location.absUrl()),
+          pageTitle = attrs.shareTitle,
+          pageTitleUri = encodeURIComponent(pageTitle),
+          shareLinks = [],
+          square = '';
+
+      elem.addClass('td-easy-social-share');
+
+      // check if square icon specified
+      square = attrs.shareSquare && attrs.shareSquare.toString() === 'true' ? '-square' : '';
+
+      // assign share link for each network
+      angular.forEach(links, function (key) {
+        key = key.trim();
+
+        switch (key) {
+          case 'twitter':
+            theLink = 'https://twitter.com/intent/tweet?text=' + pageTitleUri + '%20' + pageLink;
+            break;
+          case 'facebook':
+            theLink = 'https://facebook.com/sharer.php?u=' + pageLink;
+            break;
+          case 'linkedin':
+            theLink = 'https://www.linkedin.com/shareArticle?mini=true&url=' + pageLink + '&title=' + pageTitleUri;
+            break;
+          case 'google-plus':
+            theLink = 'https://plus.google.com/share?url=' + pageLink;
+            break;
+        }
+
+        if (sites.indexOf(key) > -1) {
+          shareLinks.push({ network: key, url: theLink });
+        }
+      });
+
+      for (i = 0; i < shareLinks.length; i++) {
+        var anchor = '';
+        anchor += '<a href="' + shareLinks[i].url + '"';
+        anchor += ' class="fa fa-' + shareLinks[i].network + square + '" target="_blank"';
+        anchor += '></a>';
+        elem.append(anchor);
+      }
+    }
+  };
+}]);
 'use strict';
 
 angular.module('bottBlog').directive('fileUpload', function () {
@@ -1530,25 +1584,70 @@ angular.module('bottBlog').directive('post', function () {
     templateUrl: './js/features/post/post.html',
     scope: {
       postData: '=',
-      showFile: '='
+      showFile: '=',
+      postId: '='
     },
-    controller: function controller($scope, $firebaseArray, $sce) {
+    controller: function controller($state, $scope, $firebaseArray, $sce, Auth, $window) {
       var storage = firebase.storage();
       var storageRef = storage.ref();
+      var ref;
+      var commentRef;
 
       $scope.$watch('postData', function () {
-        if ($scope.postData.file) {
-          var pathReference = storageRef.child($scope.postData.file);
-          pathReference.getDownloadURL().then(function (url) {
-            $scope.fileUrl = $sce.trustAsResourceUrl(url);
-            $scope.$apply();
-          }).catch(function (err) {
-            console.log(err);
-          });
+        if ($scope.postData) {
+          if (!ref && $scope.showFile) {
+            ref = firebase.database().ref('/posts/' + $scope.postId + '/comments');
+
+            commentRef = $firebaseArray(ref);
+            $scope.comments = commentRef;
+          }
+
+          if ($scope.postData.file && $scope.showFile) {
+            var pathReference = storageRef.child($scope.postData.file);
+            pathReference.getDownloadURL().then(function (url) {
+              $scope.fileUrl = $sce.trustAsResourceUrl(url);
+              $scope.$apply();
+            }).catch(function (err) {
+              console.log(err);
+            });
+          }
         }
       });
 
-      $scope.comment = function () {};
+      $scope.comment = function () {
+        Auth.$requireSignIn().then(function (el) {
+          console.log('email', el.email);
+          $scope.user = el;
+          $scope.commenting = true;
+        }).catch(function (error) {
+          if (error == 'AUTH_REQUIRED') {
+            $state.go("login");
+          }
+        });
+      };
+
+      $scope.submitComment = function () {
+        var commentDate = new Date();
+        var user = {
+          displayName: $scope.user.displayName,
+          photoURL: $scope.user.photoURL,
+          uid: $scope.user.uid,
+          email: $scope.user.email
+        };
+        var comment = {
+          user: user,
+          text: $scope.newComment,
+          comment_date: commentDate.getTime()
+        };
+        console.log(comment);
+        commentRef.$add(comment).then(function (ref) {
+          console.log('I think it worked!');
+        }, function (err) {
+          console.log('I think it failed', err);
+        });
+        $scope.newComment = '';
+        $scope.commenting = false;
+      };
     },
     link: function link(scope, element, attr) {
       if (attr.showFile == 'false') {
@@ -1735,7 +1834,7 @@ angular.module('bottBlog').controller('loginCtrl', function ($scope, $stateParam
       console.log('signed in as', firebaseUser);
       $state.go('home');
     }).catch(function (error) {
-      $state.go('login({error: "error"})');
+      alert(error);
     });
   };
 
@@ -1748,7 +1847,7 @@ angular.module('bottBlog').controller('loginCtrl', function ($scope, $stateParam
       $state.go('home');
     }).catch(function (error) {
       console.log('error', error);
-      $state.go('login({error: "error"})');
+      alert(error);
     });
   };
 
@@ -1761,7 +1860,7 @@ angular.module('bottBlog').controller('loginCtrl', function ($scope, $stateParam
       $state.go('home');
     }).catch(function (error) {
       console.log('error', error);
-      $state.go('login({error: "error"})');
+      alert(error);
     });
   };
 });
@@ -1822,6 +1921,7 @@ angular.module('bottBlog').controller('newPostCtrl', function ($scope, $state, c
 angular.module('bottBlog').controller('postCtrl', function ($scope, $firebaseArray, $stateParams) {
   firebase.database().ref('/posts/' + $stateParams.id).once('value').then(function (snap) {
     $scope.post = snap.val();
+    $scope.postId = $stateParams.id;
     console.log($scope.post);
     $scope.$apply();
   });

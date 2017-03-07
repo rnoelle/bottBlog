@@ -8,7 +8,7 @@ angular.module('bottBlog')
       link: function (scope, element, attr, ngModel) {
 
         ngModel.$validators.compareTo = function (modelValue) {
-                return modelValue == otherModelValue;
+                return modelValue == scope.otherModelValue;
 
         }
         scope.$watch('otherModelValue', function () {
