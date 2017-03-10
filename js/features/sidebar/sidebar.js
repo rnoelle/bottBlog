@@ -2,7 +2,7 @@ angular.module('bottBlog')
   .directive('sidebar', function ($firebaseArray) {
     return {
       restrict: 'E',
-      templateUrl: './js/features/sidebar/sidebar.html',
+      templateUrl: '/js/features/sidebar/sideBar.html',
       controller: function ($scope) {
         var ref = firebase.database().ref('posts/');
         var posts = $firebaseArray(ref);

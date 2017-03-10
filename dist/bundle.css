@@ -785,3 +785,6 @@ aside {
   margin-right: .25rem; }
   .share-links a:hover {
     opacity: 0.85; }
+
+.post-actions span {
+  cursor: pointer; }

@@ -11,7 +11,7 @@ angular.module('bottBlog', ['ui.router', 'firebase', 'ngTagsInput', 'td.easySoci
       currentAuth: function(Auth, $state) {
           return Auth.$requireSignIn().then(function (el) {
             console.log('email', el.email);
-            if (el.email !== 'reidnoelle2@gmail.com') {
+            if (el.email !== 'reidnoelle2@gmail.com' && el.email !== 'cjamesbott@gmail.com') {
               $state.go('home');
             }
           }).catch(function (error) {

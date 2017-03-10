@@ -13,7 +13,7 @@
   </section>
   <h6>{{postData.post_date | date: 'medium'}}</h6>
   <hr>
-  <div>
+  <div class="post-actions">
     <span ng-click="comment()">comment</span>
     <span ng-click="sharing = !sharing">share</span>
     <span ng-show="sharing" class="share-links" share-square="true" share-links="Facebook, Twitter, LinkedIn, Google-Plus" share-title="{{postData.title}}">
